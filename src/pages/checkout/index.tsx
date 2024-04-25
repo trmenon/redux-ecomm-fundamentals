@@ -5,8 +5,7 @@ import styles from "./CheckoutPage.module.scss";
 
 // Redux imports
 import { useDispatch, useSelector } from "react-redux";
-import {addItemToWishList, removeItemFromWishList } from "../../redux/wishlist-slice";
-import { addItemToCart, removeItemFromCart} from "../../redux/cart-slice";
+
 
 
 // MUI Imports
@@ -17,26 +16,26 @@ import Stack from '@mui/material/Stack';
 export const CheckoutPage: React.FC = ()=> {
     // Globals
     const navigate = useNavigate();
-    const items = useSelector((state: any)=> state.list);
-    const wishlist = useSelector((state: any)=> state.wishlist);
-    const cart = useSelector((state: any)=> state.cart);
+    // const items = useSelector((state: any)=> state.list);
+    // const wishlist = useSelector((state: any)=> state.wishlist);
+    // const cart = useSelector((state: any)=> state.cart);
 
     // Helpers
-    const getItemById = (key:number):ItemProps | null=> {
-        const current = items.find(({id}: ItemProps)=> id === key);
-        if(current) {
-            return current;
-        }
-        return null;
-    }
+    // const getItemById = (key:number):ItemProps | null=> {
+    //     const current = items.find(({id}: ItemProps)=> id === key);
+    //     if(current) {
+    //         return current;
+    //     }
+    //     return null;
+    // }
 
-    const aggregate = ()=> {
-        return cart.reduce((initial: number, acc: number)=> {
-            console.log(`ACC: ${acc}`)
-            console.log(`INIT: ${initial}`)
-            return initial + items.find(({id}: ItemProps)=> id === acc)?.price ;
-        }, 0)
-    }
+    // const aggregate = ()=> {
+    //     return cart.reduce((initial: number, acc: number)=> {
+    //         console.log(`ACC: ${acc}`)
+    //         console.log(`INIT: ${initial}`)
+    //         return initial + items.find(({id}: ItemProps)=> id === acc)?.price ;
+    //     }, 0)
+    // }
 
     // Events
     const navigateHome = ()=> navigate('/');
@@ -63,30 +62,9 @@ export const CheckoutPage: React.FC = ()=> {
                         <div className={styles["container"]}>
                             <div className={styles["scrollable"]}>
                                 <Stack spacing={2} sx={{width: '100%'}}>
-                                {
-                                    cart.map((cart_item: number)=> {
-                                        const iterator = getItemById(cart_item);
-                                        return(
-                                            iterator && (
-                                                <Stack 
-                                                    key={`cart-item-${cart_item}`}
-                                                    direction={"row"}
-                                                    spacing={'24px'}
-                                                    sx={{width: '100%'}}
-                                                >
-                                                    {iterator['title']}
-                                                    {iterator['price']}
-                                                </Stack>
-                                            )
-                                            
-                                        )
-                                    })
-                                }
+                               
                                </Stack>
                                <div>
-                                    <Typography variant={"h6"}>
-                                        {`Rs. ${aggregate()}`}
-                                    </Typography>
                                </div>
                             </div>
                         </div>

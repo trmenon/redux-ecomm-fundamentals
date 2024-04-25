@@ -5,29 +5,33 @@ import styles from "./ShopPage.module.scss";
 
 // Redux imports
 import { useDispatch, useSelector } from "react-redux";
-import {addItemToWishList, removeItemFromWishList } from "../../redux/wishlist-slice";
-import { addItemToCart, removeItemFromCart} from "../../redux/cart-slice";
+import { fetchProducts} from "../../redux/thunks";
+import { AppDispatch } from '../../redux/store';
 
 
 // MUI Imports
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Skeleton from '@mui/material/Skeleton';
+
 
 export const ShopPage: React.FC = ()=> {
     // Globals
     const navigate = useNavigate();
-    const items = useSelector((state: any)=> state.list);
-    const wishlist = useSelector((state: any)=> state.wishlist);
-    const cart = useSelector((state: any)=> state.cart);
-    const dispatch = useDispatch();
+    const {products, loading, error} = useSelector((state: any)=> state.list);
+    
+    
+    const dispatch: AppDispatch = useDispatch();
+
+    React.useEffect(()=> {dispatch(fetchProducts())}, [dispatch])
 
     // Events
     const navigateToCheckout = ()=> navigate('/checkout');
-
-    React.useEffect(()=> {console.log(wishlist)}, [wishlist]);
     
 
     // Renderer
@@ -50,80 +54,72 @@ export const ShopPage: React.FC = ()=> {
                 <div className={styles["body"]}>
                     <div className={styles["padded"]}>
                         <div className={styles["container"]}>
-                            <div className={styles["scrollable"]}>
-                                {
-                                    items?.map(({
-                                        id,
-                                        price,
-                                        description,
-                                        title,
-                                        quantity
-                                    }: ItemProps)=> {
-                                        return (
-                                            <Card key={`item-card-key-${id}`} sx={{ minWidth: 275 }}>
-                                                <CardContent>
-                                                    <Typography variant={"h6"} >
-                                                        {title}
-                                                    </Typography>
-                                                    <Typography variant={"subtitle2"} >
-                                                        {description}
-                                                    </Typography>
-                                                    <Typography variant={"body1"} >
-                                                        {`${quantity} left in stock`}
-                                                    </Typography>
-                                                    <Typography variant={"body1"} >
-                                                        {`${price} Rs.`}
-                                                    </Typography>
-                                                </CardContent>
-                                                <CardActions>                                                    
-                                                    {
-                                                        !wishlist.includes(id)?
-                                                            <Button 
-                                                                size="small"
-                                                                fullWidth
-                                                                color={"secondary"}
-                                                                onClick={()=> dispatch(addItemToWishList(id))}
-                                                            >
-                                                                Add to Wishlist
-                                                            </Button>
-                                                            :
-                                                            <Button 
-                                                                size="small"
-                                                                fullWidth
-                                                                color={"error"}
-                                                                onClick={()=> dispatch(removeItemFromWishList(id))}
-                                                            >
-                                                                Remove from Wishlist
-                                                            </Button>
-                                                    }                                                    
-                                                </CardActions>
-                                                <CardActions>                                                    
-                                                    {
-                                                        !cart.includes(id)?
-                                                            <Button 
-                                                                size="small"
-                                                                fullWidth
-                                                                color={"primary"}
-                                                                onClick={()=> dispatch(addItemToCart(id))}
-                                                            >
-                                                                Add to cart
-                                                            </Button>
-                                                            :
-                                                            <Button 
-                                                                size="small"
-                                                                fullWidth
-                                                                color={"error"}
-                                                                onClick={()=> dispatch(removeItemFromCart(id))}
-                                                            >
-                                                                Remove from cart
-                                                            </Button>
-                                                    }                                                    
-                                                </CardActions>
-                                            </Card>                                            
-                                        )
-                                    })
-                                }
-                            </div>
+                            {
+                                loading?
+                                    <Skeleton
+                                        variant={"rounded"}
+                                        width={"90%"}
+                                        height={"90%"}
+                                    />
+                                    :
+                                    error?
+                                        <Skeleton
+                                            variant={"rounded"}
+                                            width={"90%"}
+                                            height={"90%"}
+                                        />
+                                        :
+                                        <div className={styles["scrollable"]}>
+                                            {
+                                                products?.map(({
+                                                    id,
+                                                    price,
+                                                    description,
+                                                    title,
+                                                    category,
+                                                    image,
+                                                    rating
+                                                }: ItemProps)=> {
+                                                    return (
+                                                        <Card 
+                                                            key={`item-card-key-${id}`} 
+                                                            sx={{ maxWidth: 345}}
+                                                        >
+                                                            <CardHeader
+                                                                title={title}
+                                                                subheader={category}
+                                                            />
+                                                            <CardMedia
+                                                                component="img"
+                                                                height="148"
+                                                                image={image}
+                                                                alt="Paella dish"
+                                                            />
+                                                            <CardContent>
+                                                                <div className={styles["description"]}>
+                                                                    <div className={styles["description-content"]}>
+                                                                        <Typography variant={"h6"} >
+                                                                            {description}
+                                                                        </Typography>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <Typography variant={"subtitle2"} >
+                                                                <Typography variant={"subtitle2"} >
+                                                                    {`${rating['rate']} user rating`}
+                                                                </Typography>
+                                                                    {`${price} Rs.`}
+                                                                </Typography>
+                                                            </CardContent>
+                                                            <CardActions>                                                    
+                                                                <Button>Add to cart</Button>                                       
+                                                            </CardActions>
+                                                        </Card>                                            
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                            }                            
                         </div>
                     </div>
                 </div>
