@@ -18,6 +18,10 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Skeleton from '@mui/material/Skeleton';
+import Fab from '@mui/material/Fab';
+
+// Container Imports
+import { ProductCard} from "../../components";
 
 
 export const ShopPage: React.FC = ()=> {
@@ -32,11 +36,13 @@ export const ShopPage: React.FC = ()=> {
 
     // Events
     const navigateToCheckout = ()=> navigate('/checkout');
+    const refresh = ()=> dispatch(fetchProducts());
     
 
     // Renderer
     return(
         <React.Fragment>
+            
             <div className={styles["shop-page-wrapper"]}>
                 <div className={styles["header"]}>
                     <div className={styles["padded"]}>
@@ -54,6 +60,9 @@ export const ShopPage: React.FC = ()=> {
                 <div className={styles["body"]}>
                     <div className={styles["padded"]}>
                         <div className={styles["container"]}>
+                            <Fab variant="extended" onClick={refresh}>
+                                Refresh
+                            </Fab>
                             {
                                 loading?
                                     <Skeleton
@@ -71,50 +80,44 @@ export const ShopPage: React.FC = ()=> {
                                         :
                                         <div className={styles["scrollable"]}>
                                             {
-                                                products?.map(({
-                                                    id,
-                                                    price,
-                                                    description,
-                                                    title,
-                                                    category,
-                                                    image,
-                                                    rating
-                                                }: ItemProps)=> {
+                                                products?.map((product: ItemProps)=> {
                                                     return (
-                                                        <Card 
-                                                            key={`item-card-key-${id}`} 
-                                                            sx={{ maxWidth: 345}}
-                                                        >
-                                                            <CardHeader
-                                                                title={title}
-                                                                subheader={category}
-                                                            />
-                                                            <CardMedia
-                                                                component="img"
-                                                                height="148"
-                                                                image={image}
-                                                                alt="Paella dish"
-                                                            />
-                                                            <CardContent>
-                                                                <div className={styles["description"]}>
-                                                                    <div className={styles["description-content"]}>
-                                                                        <Typography variant={"h6"} >
-                                                                            {description}
-                                                                        </Typography>
-                                                                    </div>
-                                                                </div>
-                                                                
-                                                                <Typography variant={"subtitle2"} >
-                                                                <Typography variant={"subtitle2"} >
-                                                                    {`${rating['rate']} user rating`}
-                                                                </Typography>
-                                                                    {`${price} Rs.`}
-                                                                </Typography>
-                                                            </CardContent>
-                                                            <CardActions>                                                    
-                                                                <Button>Add to cart</Button>                                       
-                                                            </CardActions>
-                                                        </Card>                                            
+                                                        <ProductCard 
+                                                            data={product}
+                                                        />
+                                                        // <Card 
+                                                        //     key={`item-card-key-${id}`} 
+                                                        //     sx={{ maxWidth: 345}}
+                                                        // >
+                                                        //     <CardHeader
+                                                        //         title={title}
+                                                        //         subheader={category}
+                                                        //     />
+                                                        //     <CardMedia
+                                                        //         component="img"
+                                                        //         height="148"
+                                                        //         image={image}
+                                                        //         alt="Paella dish"
+                                                        //     />
+                                                        //     <CardContent>
+                                                        //         <div className={styles["description"]}>
+                                                        //             <div className={styles["description-content"]}>
+                                                        //                 <Typography variant={"subtitle2"}>
+                                                        //                     {description}
+                                                        //                 </Typography>
+                                                        //             </div>
+                                                        //         </div>
+                                                        //         <Typography variant={"subtitle2"} >
+                                                        //             {`${rating['rate']} user rating`}
+                                                        //         </Typography>
+                                                        //         <Typography variant={"subtitle2"} >
+                                                        //             {`${price} Rs.`}
+                                                        //         </Typography>
+                                                        //     </CardContent>
+                                                        //     <CardActions>                                                    
+                                                        //         <Button>Add to cart</Button>                                       
+                                                        //     </CardActions>
+                                                        // </Card>                                            
                                                     )
                                                 })
                                             }

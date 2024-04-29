@@ -13,3 +13,7 @@ export interface ItemProps {
     image: string;
     rating: RatingProps;
 }
+
+export interface ProductCardComponentProps {
+    data: ItemProps;
+}

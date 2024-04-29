@@ -5,14 +5,14 @@ import { fetchProducts} from "../../thunks";
 interface ProductSliceProps {
     loading: boolean;
     error: boolean;
-    timestamp: string;
+    timestamp: Date;
     products: ItemProps[];
 }
 
 const initialState : ProductSliceProps = {
     loading: false,
     error: false,
-    timestamp: "",
+    timestamp: new Date(Date.now() - 60 * 60 * 1000),
     products: []
 }
 
@@ -24,9 +24,9 @@ const listSlice = createSlice({
         builder
             .addCase(fetchProducts.pending, (state, action)=> {
                 return {
+                    ...state,
                     loading: true,
                     error: false,
-                    timestamp: "",
                     products: []
                 }
             })
@@ -34,15 +34,15 @@ const listSlice = createSlice({
                 return {
                     loading: false,
                     error: false,
-                    timestamp: "",
+                    timestamp: new Date(),
                     products: action.payload
                 }
             })
             .addCase(fetchProducts.rejected, (state, action)=> {
                 return {
+                    ...state,
                     loading: false,
                     error: true,
-                    timestamp: "",
                     products: []
                 }
             })
