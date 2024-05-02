@@ -3,6 +3,7 @@ export interface RatingProps {
     count: number;
 }
 
+
 export interface ItemProps {
     id: number;
     title: string;
@@ -16,4 +17,17 @@ export interface ItemProps {
 
 export interface ProductCardComponentProps {
     data: ItemProps;
+}
+
+// Slice Models
+export interface ProductSliceProps {
+    loading: boolean;
+    error: boolean;
+    timestamp: Date;
+    products: ItemProps[];
+}
+
+export interface CartItemProps {
+    itemId: number;
+    count: number;
 }

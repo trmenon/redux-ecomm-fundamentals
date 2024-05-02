@@ -1,4 +1,5 @@
 import React from "react";
+import useProductListingController from "./controller";
 import { useNavigate } from "react-router-dom";
 import { ItemProps} from "../../models";
 import styles from "./ShopPage.module.scss";
@@ -12,13 +13,9 @@ import { AppDispatch } from '../../redux/store';
 // MUI Imports
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
 import Skeleton from '@mui/material/Skeleton';
-import Fab from '@mui/material/Fab';
+import TextField from '@mui/material/TextField';
+import Snackbar from '@mui/material/Snackbar';
 
 // Container Imports
 import { ProductCard} from "../../components";
@@ -27,22 +24,17 @@ import { ProductCard} from "../../components";
 export const ShopPage: React.FC = ()=> {
     // Globals
     const navigate = useNavigate();
-    const {products, loading, error} = useSelector((state: any)=> state.list);
-    
-    
-    const dispatch: AppDispatch = useDispatch();
-
-    React.useEffect(()=> {dispatch(fetchProducts())}, [dispatch])
-
-    // Events
-    const navigateToCheckout = ()=> navigate('/checkout');
-    const refresh = ()=> dispatch(fetchProducts());
+    const { 
+        productStore, 
+        search,
+        controllerMethods
+    } = useProductListingController();
+    const { products, loading, error} = productStore;
     
 
     // Renderer
     return(
-        <React.Fragment>
-            
+        <React.Fragment>            
             <div className={styles["shop-page-wrapper"]}>
                 <div className={styles["header"]}>
                     <div className={styles["padded"]}>
@@ -52,81 +44,108 @@ export const ShopPage: React.FC = ()=> {
                         >
                             Shop
                         </Typography>
-                        <Button variant={"contained"} color={"primary"} onClick={navigateToCheckout}>
+                        <Button 
+                            variant={"contained"} 
+                            color={"primary"} 
+                            onClick={controllerMethods.navigateToCheckout}
+                        >
                             Checkout
                         </Button>
                     </div>
                 </div>
                 <div className={styles["body"]}>
-                    <div className={styles["padded"]}>
-                        <div className={styles["container"]}>
-                            <Fab variant="extended" onClick={refresh}>
-                                Refresh
-                            </Fab>
-                            {
-                                loading?
-                                    <Skeleton
-                                        variant={"rounded"}
-                                        width={"90%"}
-                                        height={"90%"}
-                                    />
-                                    :
-                                    error?
+                    <div className={styles["left-panel"]}>
+                        <div className={styles["padded"]}>
+                            <div className={styles["panel-card-container"]}>
+                                <div className={styles["panel-card"]}>
+                                    <div className={styles["panel-header-typography"]}>
+                                        <Typography
+                                            variant={'subtitle2'}
+                                            sx={{color: '#241d1d', fontWeight: 500, fontSize: '18px', p:0}}
+                                        >
+                                            {`${products.length} listings`}                                    
+                                        </Typography>
+                                    </div>
+                                    <Button 
+                                        variant={"contained"} 
+                                        color={"primary"} 
+                                        fullWidth
+                                        onClick={controllerMethods.refresh}
+                                    >
+                                        Refresh
+                                    </Button>
+                                </div>    
+                            </div>  
+                            <div className={styles["search-container"]}>
+                                <TextField
+                                    variant={'filled'}
+                                    label="Search"
+                                    value={search}
+                                    onChange={controllerMethods.updateSearchField}
+                                    placeholder="Search"
+                                    fullWidth
+                                />
+                                <div className={styles["search-actions"]}>
+                                    <Button 
+                                        variant={"outlined"} 
+                                        color={"primary"} 
+                                        fullWidth
+                                        onClick={controllerMethods.handleSearch}
+                                    >
+                                        Search
+                                    </Button>
+                                    <Button 
+                                        variant={"outlined"} 
+                                        color={"primary"} 
+                                        fullWidth
+                                        onClick={controllerMethods.resetSearch}
+                                    >
+                                        Reset
+                                    </Button>
+                                </div>                            
+                            </div>                      
+                        </div>
+                    </div>
+                    <div className={styles["right-panel"]}>
+                        <div className={styles["padded"]}>
+                            <div className={styles["container"]}>
+                                {
+                                    loading?
                                         <Skeleton
                                             variant={"rounded"}
                                             width={"90%"}
                                             height={"90%"}
                                         />
                                         :
-                                        <div className={styles["scrollable"]}>
-                                            {
-                                                products?.map((product: ItemProps)=> {
-                                                    return (
-                                                        <ProductCard 
-                                                            data={product}
-                                                        />
-                                                        // <Card 
-                                                        //     key={`item-card-key-${id}`} 
-                                                        //     sx={{ maxWidth: 345}}
-                                                        // >
-                                                        //     <CardHeader
-                                                        //         title={title}
-                                                        //         subheader={category}
-                                                        //     />
-                                                        //     <CardMedia
-                                                        //         component="img"
-                                                        //         height="148"
-                                                        //         image={image}
-                                                        //         alt="Paella dish"
-                                                        //     />
-                                                        //     <CardContent>
-                                                        //         <div className={styles["description"]}>
-                                                        //             <div className={styles["description-content"]}>
-                                                        //                 <Typography variant={"subtitle2"}>
-                                                        //                     {description}
-                                                        //                 </Typography>
-                                                        //             </div>
-                                                        //         </div>
-                                                        //         <Typography variant={"subtitle2"} >
-                                                        //             {`${rating['rate']} user rating`}
-                                                        //         </Typography>
-                                                        //         <Typography variant={"subtitle2"} >
-                                                        //             {`${price} Rs.`}
-                                                        //         </Typography>
-                                                        //     </CardContent>
-                                                        //     <CardActions>                                                    
-                                                        //         <Button>Add to cart</Button>                                       
-                                                        //     </CardActions>
-                                                        // </Card>                                            
-                                                    )
-                                                })
-                                            }
-                                        </div>
-                            }                            
+                                        error?
+                                            <Skeleton
+                                                variant={"rounded"}
+                                                width={"90%"}
+                                                height={"90%"}
+                                            />
+                                            :
+                                            <div className={styles["scrollable"]}>
+                                                {
+                                                    products?.map((product: ItemProps)=> {
+                                                        return (
+                                                            <ProductCard 
+                                                                data={product}
+                                                            />                                           
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                }                            
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <Snackbar
+                open={error || loading}
+                autoHideDuration={6000}
+                message={error? 'Error populating list': loading? 'Loading...': ''}
+            />
         </React.Fragment>
     )
 }

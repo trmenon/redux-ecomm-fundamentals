@@ -1,12 +1,10 @@
-import { createSlice} from "@reduxjs/toolkit";
-import { ItemProps} from "../../../models";
+import { createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { ProductSliceProps, ItemProps} from "../../../models";
 import { fetchProducts} from "../../thunks";
 
-interface ProductSliceProps {
-    loading: boolean;
-    error: boolean;
-    timestamp: Date;
-    products: ItemProps[];
+interface ManageItemPayloadProps {
+    itemId: number;
+    count: number;
 }
 
 const initialState : ProductSliceProps = {
@@ -19,7 +17,46 @@ const initialState : ProductSliceProps = {
 const listSlice = createSlice({
     name: "items",
     initialState: initialState,
-    reducers: {},
+    reducers: {
+        decrementItemByNumber(state, action: PayloadAction<ManageItemPayloadProps>){
+            const {count, itemId} = action.payload;
+            return {
+                ...state,
+                products: state?.products.map((item: ItemProps)=> {
+                    if(item?.id === itemId){
+                        return {
+                            ...item,
+                            quantity: item?.quantity - count,
+                            rating: {
+                                ...item?.rating,
+                                count: item?.rating?.count - count
+                            }
+                        }
+                    }
+                    return item;
+                })
+            }           
+        },
+        incrementItemByNumber(state, action: PayloadAction<ManageItemPayloadProps>){
+            const {count, itemId} = action.payload;
+            return {
+                ...state,
+                products: state?.products.map((item: ItemProps)=> {
+                    if(item?.id === itemId){
+                        return {
+                            ...item,
+                            quantity: item?.quantity + count,
+                            rating: {
+                                ...item?.rating,
+                                count: item?.rating?.count + count
+                            }
+                        }
+                    }
+                    return item;
+                })
+            }           
+        },
+    },
     extraReducers: (builder)=> {
         builder
             .addCase(fetchProducts.pending, (state, action)=> {
@@ -50,3 +87,4 @@ const listSlice = createSlice({
 });
 
 export default listSlice.reducer;
+export const { decrementItemByNumber, incrementItemByNumber } = listSlice.actions;

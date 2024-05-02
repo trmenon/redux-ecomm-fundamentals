@@ -1,4 +1,5 @@
 import React from 'react';
+import useProductController from './card-typography/controller';
 import { ProductCardComponentProps} from "../../models";
 import styles from "./ProductCard.module.scss";
 
@@ -14,12 +15,18 @@ import IconButton from '@mui/material/IconButton';
 // Icons
 import InfoIcon from '@mui/icons-material/Info';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
 export const ProductCard: React.FC<ProductCardComponentProps> = ({ data})=> {
+    
     // Stripping Vallues
     const {id, title, category, description, image, price, quantity, rating} = data;
     const { count, rate} = rating;
+
+    // Globals
+    const { isWished, isCarted, controllerMethods} = useProductController(id)
 
     // Renderer
     return(
@@ -34,7 +41,7 @@ export const ProductCard: React.FC<ProductCardComponentProps> = ({ data})=> {
                                         <CardTypography variant={'title'}>{title}</CardTypography>
                                     </div>
                                     <div className={styles["text-wrapper"]}>
-                                        <CardTypography variant={'subtitle'}>{category}</CardTypography>
+                                        <CardTypography variant={'subtitle'}>{count}</CardTypography>
                                     </div>
                                 </div>                                
                                 <div className={styles["card-title-actions"]}>
@@ -59,17 +66,40 @@ export const ProductCard: React.FC<ProductCardComponentProps> = ({ data})=> {
                         <div className={styles["card-footer-padded"]}>
                             <div className={styles["card-footer"]}>
                                 <div className={styles["button-container"]}>
-                                    <Button
-                                        variant={'contained'}
-                                        color={'secondary'}
-                                        fullWidth
-                                        startIcon={<AddShoppingCartIcon/>}
-                                    >
-                                        Add to cart
-                                    </Button>
+                                    {
+                                        isCarted && (
+                                            <Button
+                                                variant={'contained'}
+                                                color={'warning'}
+                                                fullWidth
+                                                startIcon={<RemoveShoppingCartIcon/>}
+                                                onClick={controllerMethods.handleRemoveFromCart}
+                                            >
+                                                Remove
+                                            </Button>
+                                        )
+                                    }
+                                    {
+                                        !isCarted && (
+                                            <Button
+                                                variant={'contained'}
+                                                color={'info'}
+                                                fullWidth
+                                                startIcon={<AddShoppingCartIcon/>}
+                                                onClick={controllerMethods.handleAddToCart}
+                                            >
+                                                Add
+                                            </Button>
+                                        )
+                                    }
+                                    
                                 </div>
-                                <IconButton aria-label="settings">
-                                    <FavoriteBorderIcon />
+                                <IconButton onClick={controllerMethods.handleWishClick}>
+                                    {isWished? 
+                                        <FavoriteIcon style={{color: 'red'}}/>
+                                        : 
+                                        <FavoriteBorderIcon style={{color: 'red'}}/>
+                                    }                                    
                                 </IconButton>
                             </div>
                         </div>

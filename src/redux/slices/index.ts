@@ -1,5 +1,9 @@
 import listReducers from "./list-slice";
+import wishlistReducers from './wishlist-slice';
+import cartReducers from './cart-slice';
 
 export {
-    listReducers
+    listReducers,
+    wishlistReducers,
+    cartReducers
 }
