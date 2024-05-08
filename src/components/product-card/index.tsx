@@ -11,6 +11,11 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import Rating from '@mui/material/Rating';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 // Icons
 import InfoIcon from '@mui/icons-material/Info';
@@ -22,11 +27,16 @@ import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 export const ProductCard: React.FC<ProductCardComponentProps> = ({ data})=> {
     
     // Stripping Vallues
-    const {id, title, category, description, image, price, quantity, rating} = data;
-    const { count, rate} = rating;
+    const {id, title, category, description, image, rating} = data;
+    const { count} = rating;
 
     // Globals
-    const { isWished, isCarted, controllerMethods} = useProductController(id)
+    const { isWished, isCarted, controllerMethods} = useProductController(id);
+
+    // States for dialog
+    const [open, setOpen] = React.useState<boolean>(false);
+    const handleOpen = ()=> setOpen(true);
+    const handleClose = ()=> setOpen(false);
 
     // Renderer
     return(
@@ -45,7 +55,7 @@ export const ProductCard: React.FC<ProductCardComponentProps> = ({ data})=> {
                                     </div>
                                 </div>                                
                                 <div className={styles["card-title-actions"]}>
-                                    <IconButton aria-label="settings">
+                                    <IconButton onClick={handleOpen}>
                                         <InfoIcon />
                                     </IconButton>
                                 </div>                                
@@ -104,9 +114,27 @@ export const ProductCard: React.FC<ProductCardComponentProps> = ({ data})=> {
                             </div>
                         </div>
                     </div>
-                </div>
-                
+                </div>                
             </Card>
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle id="alert-dialog-title">
+                    {title}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {category}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {description}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogContent>
+                    <Rating name="Rating" value={Number(rating['rate'])} readOnly  />
+                </DialogContent>
+            </Dialog>
         </React.Fragment>
     )
 }

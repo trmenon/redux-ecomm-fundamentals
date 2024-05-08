@@ -1,0 +1,114 @@
+.checkout-item-card-wrapper {
+    width: 100%;
+    height: 80px !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(233, 231, 229);
+    border-radius: 12px;
+    overflow: hidden;
+
+    .checkout-item-card-padded {
+        height: 60px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 1;
+        padding: 10px 24px;
+        gap: 24px;
+
+        .checkout-item-card {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            
+            .description-section {
+                width: calc(100% - 340px);
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 8px;
+
+                @media (max-width: 1024px) {
+                    width: 100%;
+                }
+
+                .image-layer {
+                    width: 60px;
+                    height: 60px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .product-description {
+                    width: calc(100% - 68px);
+                    height: 60px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: flex-start;
+                    gap: 0;
+
+                    .content-layer {
+                        width: 100%;
+                        max-width: 100%;
+                        height: 28px;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: flex-start;
+                        overflow: hidden; 
+                        text-overflow: ellipsis; 
+                        white-space: nowrap;
+                    }
+                }
+            }
+            .controller-section {
+                width: 172px;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+
+                .quantity-container {
+                    width: 60px;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: rgb(197, 193, 186);
+                    border-radius: 50%;
+                }
+
+                @media (max-width: 1024px) {
+                    display: none; // hide the div when screen size is less than 400px
+                }
+            }
+            .pricing-section {
+                width: 120px;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 8px;
+
+                @media (max-width: 1024px) {
+                    display: none; // hide the div when screen size is less than 400px
+                }
+            }
+        }
+    }
+}

@@ -1,10 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ItemProps} from "../../models";
+import useCheckoutController from "./controller";
+import { ItemProps, CheckoutItemProps} from "../../models";
 import styles from "./CheckoutPage.module.scss";
 
-// Redux imports
-import { useDispatch, useSelector } from "react-redux";
+// Container
+import { BillCardButton, CheckoutItemCard} from "../../components";
 
 
 
@@ -16,26 +17,7 @@ import Stack from '@mui/material/Stack';
 export const CheckoutPage: React.FC = ()=> {
     // Globals
     const navigate = useNavigate();
-    // const items = useSelector((state: any)=> state.list);
-    // const wishlist = useSelector((state: any)=> state.wishlist);
-    // const cart = useSelector((state: any)=> state.cart);
-
-    // Helpers
-    // const getItemById = (key:number):ItemProps | null=> {
-    //     const current = items.find(({id}: ItemProps)=> id === key);
-    //     if(current) {
-    //         return current;
-    //     }
-    //     return null;
-    // }
-
-    // const aggregate = ()=> {
-    //     return cart.reduce((initial: number, acc: number)=> {
-    //         console.log(`ACC: ${acc}`)
-    //         console.log(`INIT: ${initial}`)
-    //         return initial + items.find(({id}: ItemProps)=> id === acc)?.price ;
-    //     }, 0)
-    // }
+    const { items} = useCheckoutController();
 
     // Events
     const navigateHome = ()=> navigate('/');
@@ -43,7 +25,7 @@ export const CheckoutPage: React.FC = ()=> {
     // Renderer
     return(
         <React.Fragment>
-             <div className={styles["checkout-page-wrapper"]}>
+            <div className={styles["checkout-page-wrapper"]}>
                 <div className={styles["header"]}>
                     <div className={styles["padded"]}>
                         <Typography
@@ -59,13 +41,60 @@ export const CheckoutPage: React.FC = ()=> {
                 </div>
                 <div className={styles["body"]}>
                     <div className={styles["padded"]}>
-                        <div className={styles["container"]}>
-                            <div className={styles["scrollable"]}>
-                                <Stack spacing={2} sx={{width: '100%'}}>
-                               
-                               </Stack>
-                               <div>
-                               </div>
+                        <div className={styles["checkout-container"]}>
+                            <div className={styles["checkout-header"]}>
+                                <div className={styles["checkout-header-container"]}>
+                                    <Typography
+                                        variant={"h6"}
+                                        sx={{color: "#3e3d42", fontWeight: 600, fontSize: '16px'}}
+                                    >
+                                        {`${items.length} items in cart`}
+                                    </Typography>
+                                    <BillCardButton 
+                                        net={
+                                            Math.round(items.reduce((
+                                                initial: number,
+                                                {netPrice}: CheckoutItemProps
+                                            )=> {
+                                                return initial + netPrice
+                                            }, 0))
+                                        }
+                                    />
+                                </div>                                
+                            </div>
+                            <div className={styles["checkout-body"]}>
+                                <div className={styles["container"]}>
+                                    <div className={styles["content-scrollable"]}>
+                                        <div className={styles["checkout-items-listing"]}>
+                                            {
+                                                items.map(({
+                                                    itemId,
+                                                    title,
+                                                    image,
+                                                    category,
+                                                    quantity,
+                                                    netPrice
+                                                }: CheckoutItemProps)=> {
+                                                    return (
+                                                        <div 
+                                                            className={styles["list-item"]}
+                                                            key={`checkout-item-${itemId}`}
+                                                        >
+                                                            <CheckoutItemCard 
+                                                                itemId={itemId}
+                                                                title={title}
+                                                                category={category}
+                                                                image={image}
+                                                                netPrice={netPrice}
+                                                                quantity={quantity}
+                                                            />
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
